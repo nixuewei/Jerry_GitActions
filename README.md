@@ -1,6 +1,6 @@
 # Jerry_GitActions
 
-这是 Jerry_GitActions 项目的 README 文件。该项目旨在提供一组用于演示和实战的 GitHub Actions 工作流示例，帮助用户学习、测试和快速上手 CI/CD 自动化。
+这是 GitActions 项目的 README 文件。该项目旨在提供一组用于演示和实战的 GitHub Actions 工作流示例生成Robotframework的Report，帮助用户学习、测试和快速上手 CI/CD 自动化。
 
 主要内容
 
