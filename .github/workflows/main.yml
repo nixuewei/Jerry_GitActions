@@ -10,24 +10,29 @@ permissions:
 
 jobs:
   test-and-report:
+    # 这里回到宿主机运行，宿主机自带 git
     runs-on: ubuntu-latest
-    # 强制在容器内运行
-    container:
-      image: ppodgorsek/robot-framework:latest
-      # 必须以 root 运行，否则 GitHub Action 无法在容器内同步代码和写入结果
-      options: --user root
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Run Robot API Tests
+      - name: Run Robot API Tests in Docker
         run: |
-          # 确保在当前代码目录下执行
-          # 使用 --outputdir 指定结果存放位置
-          robot --outputdir results api_test.robot || echo "Tests failed, but proceeding to generate report..."
+          # 1. 创建结果目录并设为 777 权限，确保容器能写入
+          mkdir -p results
+          chmod 777 results
+          
+          # 2. 使用 docker run 挂载当前目录
+          # ppodgorsek 镜像默认会运行 /opt/robotframework/tests 下的脚本
+          # 并把结果输出到 /opt/robotframework/reports
+          docker run --rm \
+            -v $(pwd):/opt/robotframework/tests \
+            -v $(pwd)/results:/opt/robotframework/reports \
+            ppodgorsek/robot-framework:latest
 
       - name: Deploy to GitHub Pages
+        if: always()
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
